@@ -1,0 +1,32 @@
+---
+description: Playwright E2E test authoring standards
+globs:
+  - "tests/**/*.spec.ts"
+  - "pages/**/*.ts"
+  - "fixtures/**/*.ts"
+alwaysApply: false
+---
+
+# Playwright E2E rules
+
+When creating or editing Playwright tests, page objects, or fixtures:
+
+- **One behavior per test**, asserting a single user-observable outcome. Tag critical
+  auth/revenue flows `@smoke`.
+- **Page Object Model**: selectors live in `pages/*` as readonly fields set in the
+  constructor. Page objects expose intent methods (`login()`, `addToCart()`), never
+  raw locators to the spec.
+- **Fixtures over copy-paste**: inject page objects and a one-line `loggedIn` state via
+  `test.extend` in `fixtures/test-options.ts`. Tests never log in inline.
+- **No hard waits**: never `waitForTimeout`. Use web-first assertions
+  (`await expect(locator).toBeVisible()`) that auto-wait and auto-retry.
+- **Locator priority**: `getByRole` → `getByLabel`/`getByPlaceholder` → `getByText` →
+  `getByTestId`. Never nth-child, deep CSS, or XPath.
+- **Deterministic data**: each test provisions and cleans up its own data; no
+  order-dependent or shared mutable state.
+- **Env-driven**: base URL and credentials from `process.env`; never hardcode/commit.
+- **TypeScript strict**, no `any`; assertions live in the spec or explicit `expect*`
+  methods, never inside action methods.
+
+Reject: `waitForTimeout`, brittle CSS/nth-child selectors, inline logins, hidden
+assertions, hardcoded URLs/creds, committed `test.only`.

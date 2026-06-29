@@ -1,0 +1,27 @@
+---
+description: Cypress E2E test authoring standards
+globs:
+  - "cypress/e2e/**/*.cy.ts"
+  - "cypress/support/**/*.ts"
+alwaysApply: false
+---
+
+# Cypress E2E rules
+
+When creating or editing Cypress specs, commands, or support files:
+
+- **One behavior per `it`**, single user-observable assertion. Tag critical flows for a
+  `@smoke` grep subset.
+- **Setup via custom commands**: `Cypress.Commands.add('login', ...)` using `cy.request`
+  for **programmatic** login. Avoid driving the UI to authenticate.
+- **Selectors out of specs**: centralize in commands/page objects. Prefer
+  `[data-cy=...]`/`[data-test=...]` and `cy.contains`. Avoid nth-child/brittle CSS.
+- **No arbitrary waits**: never `cy.wait(ms)`. Use `cy.intercept()` + `cy.wait('@alias')`
+  for network and `.should(...)` for retrying UI assertions.
+- **Deterministic data**: seed via `cy.request`/tasks, reset in `beforeEach`; no
+  order-dependent specs.
+- **Env-driven**: base URL in config, credentials via `Cypress.env`; never hardcode/commit.
+- **TypeScript**, typed chainers, no `any`.
+
+Reject: `cy.wait(milliseconds)`, UI logins in every test, brittle CSS selectors,
+hardcoded URLs/creds, committed `it.only`.

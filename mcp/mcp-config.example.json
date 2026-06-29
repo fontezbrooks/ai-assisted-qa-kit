@@ -1,0 +1,28 @@
+{
+  "_comment": "Example MCP server config for an AI-assisted QA workflow. Copy the relevant block into your Claude Code / Cursor MCP settings. Replace ALL <...> placeholders. NEVER commit real tokens — use environment variables.",
+  "mcpServers": {
+    "playwright": {
+      "_use": "Let the assistant drive a real browser to explore the app and capture stable locators while writing tests.",
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"]
+    },
+    "postgres-testdata": {
+      "_use": "Read-only DB access so the assistant can generate SQL data-validation checks and provision deterministic test data. Point at a TEST database only.",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres", "<POSTGRES_TEST_CONNECTION_STRING>"]
+    },
+    "github": {
+      "_use": "Read PRs/issues and CI run logs so the assistant can write regression tests from bug reports and debug failing CI runs.",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "<set-via-env-not-here>"
+      }
+    },
+    "filesystem": {
+      "_use": "Scoped file access to your test directory so the assistant can read existing page objects before generating new tests.",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "<ABSOLUTE_PATH_TO_YOUR_TEST_PROJECT>"]
+    }
+  }
+}

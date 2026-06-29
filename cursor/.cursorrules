@@ -1,0 +1,37 @@
+# .cursorrules — QA / Test Automation (Playwright + Cypress)
+# Legacy single-file format. For modern Cursor, use the split rules in cursor/rules/*.mdc instead.
+# Place this file at your project root.
+
+You are assisting on an end-to-end test automation codebase. Write tests that are
+stable, maintainable, and CI-ready. Follow these rules without exception.
+
+## Universal rules
+- One behavior + one user-observable assertion per test.
+- Selectors live in page objects / custom commands, never inline in specs.
+- Specs read like user stories: call intent methods (login, addToCart), not raw locators.
+- Never use hard/arbitrary waits (no waitForTimeout / cy.wait(ms)). Use auto-retrying
+  assertions and network interception instead.
+- Prefer user-facing locators: role > label/placeholder > text > test-id. Avoid
+  nth-child, deep CSS, and XPath.
+- Each test provisions and cleans up its own data. No order-dependent or shared mutable state.
+- Read base URL and credentials from environment/config. Never hardcode or commit secrets.
+- TypeScript strict; no `any`. Async/await throughout.
+- Tag critical revenue/auth paths with @smoke.
+
+## Playwright specifics
+- Use custom fixtures (test.extend) to inject page objects and a one-line `loggedIn` state.
+- Use web-first assertions: await expect(locator).toBeVisible() / toHaveText().
+- Config is env-driven: retries on CI only; trace on-first-retry; screenshot/video on failure only.
+
+## Cypress specifics
+- Programmatic login via cy.request inside a cy.login() custom command.
+- Assert network with cy.intercept + cy.wait('@alias'); never sleep.
+- Select via [data-cy=...] attributes.
+
+## Always reject
+- waitForTimeout / cy.wait(milliseconds)
+- selectors like `div > div:nth-child(3) span`
+- logging in through the UI inside every test
+- assertions hidden inside action methods
+- hardcoded URLs or credentials
+- committed test.only / it.only
